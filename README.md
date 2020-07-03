@@ -18,3 +18,11 @@ FACILITIES provided for Student in this Project
 
 SECURITY USED-
 I have used JWT,JSON WEB TOKEN for the securing the details of admin as well as student.
+
+INSTRUCTIONS TO USE IT--
+Download the project.
+Run npm install in your terminal to install the dependencies.
+
+
+
+
