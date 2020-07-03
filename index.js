@@ -65,7 +65,7 @@ app.get('/',(req,res)=>{
 app.get('/admin/add',checkAuth,(req,res)=>{
 	res.render('SignupAdmin',{err:""});
 });
-app.post('/admin/add',(req,res)=>{
+app.post('/admin/add',checkAuth,(req,res)=>{
 
 	Admin.findOne({username:req.body.username},(err,result)=>{
 		if(!result)
@@ -102,7 +102,7 @@ app.get('/admin/list',checkAuth,(req,res)=>{
 		}
 	})
 });
-app.delete('/admin/:id/delete',(req,res)=>{
+app.delete('/admin/:id/delete',checkAuth,(req,res)=>{
 	Admin.deleteOne({username:req.params.id},function(err,result){
 		if(err)
 			console.log(err);
@@ -111,11 +111,11 @@ app.delete('/admin/:id/delete',(req,res)=>{
 	})
 })
 /////////////REGISTER A STUDENT///////////////////////////////
-app.get('/admin/register',(req,res)=>{
+app.get('/admin/register',checkAuth,(req,res)=>{
 	res.render('Register');
 });
 
-app.post('/admin/register',(req,res)=>{
+app.post('/admin/register',checkAuth,(req,res)=>{
 	const obj =new Student({
 		_id:req.body.id,
 		dob:req.body.dob,
@@ -142,12 +142,12 @@ app.post('/admin/register',(req,res)=>{
 
 ////////////////LOGIN AS A STUDENT////////////////////////////
 var required_sem;
-app.get('/admin/ls',(req,res)=>{
+app.get('/admin/ls',checkAuth,(req,res)=>{
 	res.render('LoginStudent',{err:""});
 });
 var check_Id;
 var StudentRecord;
-app.post('/admin/ls',(req,res)=>{
+app.post('/admin/ls',checkAuth,(req,res)=>{
 	check_Id=req.body.rid;
 	required_sem=req.body.sem;
 	Student.findOne({_id:check_Id},(err,rec)=>{
@@ -180,7 +180,7 @@ var course,ms;
 ///////////////////////////ENTERING SEMESTER AND MIDSEM/////////////////////
 
 ////////////////STORING MARKS IN DB////////////////////////////////
-app.post('/admin/midterm/marks',(req,res)=>{
+app.post('/admin/midterm/marks',checkAuth,(req,res)=>{
 	
 		var m_written=[];
 		var m_practical=[];
@@ -253,11 +253,11 @@ app.post('/admin/midterm/marks',(req,res)=>{
 
 ////ADDING COURSE STRUCTURE FOR A PARTICULAR SEMESTER/////////
 
-app.get('/admin/course',(req,res)=>{
+app.get('/admin/course',checkAuth,(req,res)=>{
 	res.render('Course');
 });
 
-app.post('/admin/course',(req,res)=>{
+app.post('/admin/course',checkAuth,(req,res)=>{
 	const arr=req.body.wsubject.split(',');
 	const arr2=req.body.psubject.split(',');
 	const course=new Course({
@@ -284,7 +284,7 @@ app.get('/admin/students',checkAuth,(req,res)=>{
 	})
 });
 
-app.get('/admin/students/:id/edit',(req,res)=>{
+app.get('/admin/students/:id/edit',checkAuth,(req,res)=>{
 	Student.findOne({_id:req.params.id},function(err,result){
 		if(!result)
 			console.log(err);
@@ -294,7 +294,7 @@ app.get('/admin/students/:id/edit',(req,res)=>{
 
 });
 
-app.put('/admin/students/:id',(req,res)=>{
+app.put('/admin/students/:id',checkAuth,(req,res)=>{
 	Student.updateOne({_id:req.params.id},req.body,function(err,result){
 				if(err)
 					{console.log("error");}
@@ -308,7 +308,7 @@ app.get('/admin/marks/edit',checkAuth,(req,res)=>{
 var cid;
 var sr;
 
-app.post('/admin/marks/edit',(req,res)=>{
+app.post('/admin/marks/edit',checkAuth,(req,res)=>{
 
 	cid=req.body.rid;
 	Student.findOne({_id:cid},(err,rec)=>{
@@ -328,7 +328,7 @@ app.post('/admin/marks/edit',(req,res)=>{
 
 });
 
-app.put('/admin/marks/edit/:id',(req,res)=>{
+app.put('/admin/marks/edit/:id',checkAuth,(req,res)=>{
 	var subjects=Object.keys(req.body);
 
 	var m_written=[];
@@ -386,7 +386,7 @@ app.put('/admin/marks/edit/:id',(req,res)=>{
 	})
 });
 
-app.delete('/admin/students/:id/delete',(req,res)=>{
+app.delete('/admin/students/:id/delete',checkAuth,(req,res)=>{
 	Student.deleteOne({_id:req.params.id},function(err,result){
 		if(err)
 			console.log(err);
@@ -613,7 +613,7 @@ app.get('/user/marks',UsercheckAuth,(req,res)=>{
 	res.render('UserMarks');
 });
 
-app.post('/user/marks',(req,res)=>{
+app.post('/user/marks',UsercheckAuth,(req,res)=>{
 	var ac,pr;
 	
 	lap.total.map(rec=>{
@@ -634,7 +634,7 @@ app.post('/user/marks',(req,res)=>{
 		res.redirect('/user/marks');
 });
 
-app.get('/Userlogout',(req,res)=>{
+app.get('/Userlogout',UsercheckAuth,(req,res)=>{
 	var tok=req.cookies.token;
   UserTokens= UserTokens.filter(function(term){
   	return passwordHash.verify(tok,term)!=true;
