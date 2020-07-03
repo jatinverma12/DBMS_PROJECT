@@ -1,0 +1,45 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Validate.js example</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Downloaded mdb.css file -->
+  <link href="/css/mdb.min.css" rel="stylesheet">
+  <link href="/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="card mx-5 my-5 px-5 py-5" style="min-height: 20vh;">
+    <h1>Login as student</h1>
+    <form id="main" class="form-horizontal" action="/admin/marks/edit" method="post" novalidate>
+      <div class="form-group row mb-0">
+          <div class="col-sm-8 md-form px-0">
+            <input id="email" class="form-control" type="email" name="rid">
+            <label for="email" class="control-label">Registration No.</label>
+          </div>
+          <div class="col-sm-4 messages"><%=err%></div>
+      </div>
+
+       <div class="form-group">
+        <div class="text-center pt-3">
+          <button type="submit" class="btn btn-dark">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Optional libraries I am using in this tutorial -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+  <!-- Core MDB elements -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"> </script>
+  <!-- Downloaded mdb.js file -->
+  <script src="/js/mdb.min.js"></script>
+  <!-- Library we are trying to use today -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+  </body>
+
+</html>
