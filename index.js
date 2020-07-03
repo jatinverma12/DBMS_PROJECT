@@ -29,13 +29,13 @@ const jwtExpirySeconds=300;
 
 var mongodb = require('mongodb');
 
-mongoose.connect("mongodb://localhost/Project",{
+mongoose.connect("mongodb+srv://verma_jatin:vermajatin4621@cluster0.i6rkc.mongodb.net/<dbname>?retryWrites=true&w=majority",{
   useUnifiedTopology:true,
   useNewUrlParser:true
 }).then(()=>{
   console.log("connected to DB!");
 }).catch(err=>{
-  console.log("error");
+  console.log(err);
 });
 
 var methodOverride=require("method-override");
