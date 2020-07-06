@@ -1,34 +1,21 @@
 var mongoose=require("mongoose");
 var StudentSchema=new mongoose.Schema({
-		id:Number,
-		name:String,
+		_id:Number,
+		dob:Date,
+		eno:String,
+		sname:String,
+		fname:String,
 		branch:String,
-		sem:[
-		{	
-			index:Number,
-			exam:[
-				{
-					term:String,
-					marks:[
-					{sub:String,num:Number}
-					]
-				}
-			],
+		email:String,
+		contact:Number,
+		total:[{
+			sem:Number,
+			marks_sem:[{term:String,
+				m_written:[{subject:String,mark:Number}],
+				m_practical:[{subject:String,mark:Number}]
+			}],
 
-			practicals:[
-				{
-					term:String,
-					marks:[
-					{sub:String,num:Number}
-					]
-				}
-			],
 
-			attendance:{
-				subjects:[{sub:String,present:Number}]
-			}
-
-		}]
-	
+		}]			
 });
 module.exports=mongoose.model("Student",StudentSchema);

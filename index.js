@@ -8,9 +8,9 @@ var cookieParser = require('cookie-parser');
 const session=require('express-session');
 var path = require('path');
 var bodyParser = require('body-parser');
-const Student=require('./Student');
-const Admin=require('./Admin');
-const Course=require('./CourseSchema');
+const Student=require('./models/Student');
+const Admin=require('./models/Admin');
+const Course=require('./models/CourseSchema');
 const { v4: uuidv4 } = require('uuid');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -49,7 +49,7 @@ app.use(methodOverride("_method"));
 app.use(express.static('public'));
 
 
-///////////////////////ADMIN ROUTES///////////////////////////////
+////////////////////////////////////////ADMIN ROUTES///////////////////////////////
 
 //////LANDING PAGE///////////////////////////
 app.get('/',(req,res)=>{
@@ -90,7 +90,7 @@ app.post('/admin/add',checkAuth,(req,res)=>{
 	
 ;});
 
-/////////////////ADMIN PAGE//////////////////////////////
+/////////////////ADMIN LIST PAGE//////////////////////////////
 
 
 app.get('/admin/list',checkAuth,(req,res)=>{
@@ -102,6 +102,8 @@ app.get('/admin/list',checkAuth,(req,res)=>{
 		}
 	})
 });
+
+//////////////////////ROUTE TO DELETE AN ADMIN//////////////
 app.delete('/admin/:id/delete',checkAuth,(req,res)=>{
 	Admin.deleteOne({username:req.params.id},function(err,result){
 		if(err)
@@ -140,7 +142,7 @@ app.post('/admin/register',checkAuth,(req,res)=>{
 
 });
 
-////////////////LOGIN AS A STUDENT////////////////////////////
+////////////////////////////////ROUTE TO EDIT MARKS OF A STUDENT///////////////////////
 var required_sem;
 app.get('/admin/ls',checkAuth,(req,res)=>{
 	res.render('LoginStudent',{err:""});
@@ -161,11 +163,11 @@ app.post('/admin/ls',checkAuth,(req,res)=>{
 			if(!rec)
 			console.log("not found");
 			else
-			{	count=rec.subjects.length;
+		{
+				count=rec.subjects.length;
 				course=rec;
 				ms=req.body.ms;
 				rec={...rec,"ms":req.body.ms};
-				
 				res.render('Marks',{data:rec});
 
 			}
@@ -251,7 +253,7 @@ app.post('/admin/midterm/marks',checkAuth,(req,res)=>{
 		}
 });
 
-////ADDING COURSE STRUCTURE FOR A PARTICULAR SEMESTER/////////
+////ADDING COURSE STRUCTURE FOR A PARTICULAR SEMESTER AND BRANCH/////////
 
 app.get('/admin/course',checkAuth,(req,res)=>{
 	res.render('Course');
@@ -274,7 +276,7 @@ app.post('/admin/course',checkAuth,(req,res)=>{
 	})
 });
 
-///////////GETTING ALL STUDENTS////////////////////////
+/////////// ROUTE TO GET  ALL STUDENTS REGISTERED////////////////////////
 app.get('/admin/students',checkAuth,(req,res)=>{
 	Student.find({},function(err,result){
 		if(err)
@@ -283,6 +285,8 @@ app.get('/admin/students',checkAuth,(req,res)=>{
 			res.render('student',{st:result});
 	})
 });
+
+///////////EDIT STUDENTS PERSONAL DETAILS//////////////////////
 
 app.get('/admin/students/:id/edit',checkAuth,(req,res)=>{
 	Student.findOne({_id:req.params.id},function(err,result){
@@ -294,6 +298,7 @@ app.get('/admin/students/:id/edit',checkAuth,(req,res)=>{
 
 });
 
+/////////////////UPDATING THE DETAILS IN DATABASE///////////////////
 app.put('/admin/students/:id',checkAuth,(req,res)=>{
 	Student.updateOne({_id:req.params.id},req.body,function(err,result){
 				if(err)
@@ -301,6 +306,8 @@ app.put('/admin/students/:id',checkAuth,(req,res)=>{
 				res.redirect('/admin/students');
 			});
 });
+
+///////////////////ROUTE TO EDIT MARKS OF A STUDENT/////////////////
 
 app.get('/admin/marks/edit',checkAuth,(req,res)=>{
 	res.render('EditTerm',{err:""});
@@ -327,6 +334,8 @@ app.post('/admin/marks/edit',checkAuth,(req,res)=>{
 	})
 
 });
+
+/////////////UPDATING THE CHANGED MARKS IN DATABASE//////////////////
 
 app.put('/admin/marks/edit/:id',checkAuth,(req,res)=>{
 	var subjects=Object.keys(req.body);
@@ -395,11 +404,13 @@ app.delete('/admin/students/:id/delete',checkAuth,(req,res)=>{
 	})
 })
 
+/////////////////ROUTE TO GO ON EVENT PAGE////////////////
 
 app.get('/admin/event',checkAuth,(req,res)=>{
 	res.render('Event');
 });
 
+///ROUTE TO POST THE DETAILS AND SEND THEM TO STUDENTS VIA EMAIL ON THEIR EMAIL ID'S
 app.post('/admin/event',upload.single('avatar'),(req,res)=>{
 	console.log(req.file);
 	const encoded = req.file.buffer.toString('base64');
@@ -427,10 +438,12 @@ app.post('/admin/event',upload.single('avatar'),(req,res)=>{
 
 });
 
+/////////////GETTING ASSIGNMENT PAGE////////////////////////////
 app.get('/admin/assignment',checkAuth,(req,res)=>{
 	res.render('Assignment');
 });
 
+/////////ROUTE TO POST THE DETAILS REGARDING ASSIGNMENT AND SEND THEM TO STUDENTS VIA EMAIL/////////
 app.post('/admin/assignment',upload.single('avatar'),(req,res)=>{
 	console.log(req.file);
 	const encoded = req.file.buffer.toString('base64');
@@ -457,10 +470,13 @@ app.post('/admin/assignment',upload.single('avatar'),(req,res)=>{
 })
 var tokens=[];
 
+//////LOGIN ROUTE FOR ADMIN///////////////
+
 app.get('/admin',(req,res)=>{
 	res.render('LoginAdmin',{erru:"",errp:""});
 });
 
+//////////AUTHORIZATION AS WELL AS JWT GENERATION///////////
 app.post('/admin/login',(req,res)=>{
 	Admin.findOne({username:req.body.id},(function(err,result){
 		if(!result)
@@ -475,14 +491,13 @@ app.post('/admin/login',(req,res)=>{
 				console.log("token:", token);
 				tokens.push(passwordHash.generate(token.toString()));
 
-	// set the cookie as the token string, with a similar max age as the token
-	// here, the max age is in milliseconds, so we multiply by 1000
 					res.cookie("token", token);
 					res.render('Main');
 			}
 	}))
 });
 
+///////////ROUTE FOR ADMIN TO LOGOUT////////////////////
 app.get('/logout',checkAuth,(req,res)=>{
 	var tok=req.cookies.token;
   tokens= tokens.filter(function(term){
@@ -492,8 +507,7 @@ app.get('/logout',checkAuth,(req,res)=>{
 	res.redirect('/');
 });
 
-
-
+/* MIDDLEWARE TO CHECK FOR ADMIN AUTHENTICATION */
 
 function checkAuth(req,res,next){
 	const token = req.cookies.token;
@@ -532,6 +546,7 @@ function checkAuth(req,res,next){
 		}
 	}
 
+/*MIDDLEWARE TO CHECK FOR USER AUTHENTICATION*/
 
 
 	function UsercheckAuth(req,res,next){
@@ -572,14 +587,17 @@ function checkAuth(req,res,next){
 	}
 
 
-////////////////////////////////USER ROUTES/////////////////////////////////////////////
+////////////////////////////////USER ROUTES/////////////////////////////////////////////////////
 UserTokens=[];
+///////////USER LOGIN ROUTE///////////////////////////////
 app.get('/user',(req,res)=>{
 	res.render('UserLogin',{erru:""});
 });
 var uid;
 var curr;
 var lap;
+
+////////////////////CHECKING AUTHORIZATION//////////////////////////////
 app.post('/user',(req,res)=>{
 	Student.findOne({_id:req.body.id},(function(err,result){
 		if(!result)
@@ -603,12 +621,14 @@ app.post('/user',(req,res)=>{
 	}));
 });
 
+//////////////////////////ROUTE TO GET PERSONAL DETAILS OF USER/////////////
 app.get('/user/info/',UsercheckAuth,(req,res)=>{
 	Student.findOne({_id:uid},function(err,result){
 		res.render('ShowInfo',{data:result});
 	})
 });
 
+///////////////ROUTE TO GET MARKS OF USER//////////////////////
 app.get('/user/marks',UsercheckAuth,(req,res)=>{
 	res.render('UserMarks');
 });
@@ -633,6 +653,8 @@ app.post('/user/marks',UsercheckAuth,(req,res)=>{
 	else
 		res.redirect('/user/marks');
 });
+
+///////////ROUTE FOR USER TO GET LOGGED OUT OF THE WEBSITE///////////////////
 
 app.get('/Userlogout',UsercheckAuth,(req,res)=>{
 	var tok=req.cookies.token;
