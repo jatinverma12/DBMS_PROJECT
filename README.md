@@ -23,6 +23,10 @@ INSTRUCTIONS TO USE IT--
 Download the project.
 Run npm install in your terminal to install the dependencies.
 
+FOR USING ADMIN SECTION OF WEBSITE-
+LOGIN USING CREDENTIALS-USER=jatin12
+                        PASS=raman
+
 
 
 
