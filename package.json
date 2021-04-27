@@ -28,7 +28,7 @@
     "nodemon": "^2.0.4",
     "password-hash": "^1.2.2",
     "path": "^0.12.7",
-    "redis": "^3.0.2",
+    "redis": "^3.1.1",
     "redis-server": "^1.2.2",
     "uuid": "^8.2.0"
   }
